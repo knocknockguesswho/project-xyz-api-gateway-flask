@@ -11,7 +11,7 @@ class UserController:
     try:
       # get user id from decoded access token
       access_token = request.headers.get('Authorization')
-      user_id = jwt_helper.decode_token(access_token=access_token)['user_id']
+      user_id = jwt_helper.decode_token(token=access_token)['user_id']
       res = requests.get(f'http://127.0.0.1:5001/get-by-id/{user_id}')
       res = json.loads(res.text)
       response_helper.set_data(res['data'])

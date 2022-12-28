@@ -24,7 +24,7 @@ class JWTHelper:
     encoded = jwt.encode(payload=payload, key=_ENUM_KEY_[bool(is_refresh_token)], algorithm=self.algorithm)
     return encoded
 
-  def decode_token(self, access_token: str, is_refresh_token: bool = False, verify_signature: bool = False):
-    access_token = access_token.replace('Bearer ', '')
-    decoded = jwt.decode(jwt=access_token, key=_ENUM_KEY_[bool(is_refresh_token)], algorithms=self.algorithm, options={'verify_signature': verify_signature})
+  def decode_token(self, token: str, is_refresh_token: bool = False, verify_signature: bool = False):
+    token = token.replace('Bearer ', '')
+    decoded = jwt.decode(jwt=token, key=_ENUM_KEY_[bool(is_refresh_token)], algorithms=self.algorithm, options={'verify_signature': verify_signature})
     return decoded
