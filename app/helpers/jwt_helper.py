@@ -5,7 +5,7 @@ from app.config import config
 
 _ENUM_KEY_ = {
   0: config['SECRET_KEY'].encode('utf-8'),
-  1: config['REFRESH_TOKEN_SECRET_KEY'].encode('utf-8')
+  1: config['REFRESH_TOKEN_SECRET_KEY'].encode('utf-8') # TODO: will be deprecated
 }
 
 class JWTHelper:

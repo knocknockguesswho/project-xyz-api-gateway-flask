@@ -1,5 +1,6 @@
 from flask import Blueprint
 from app.controllers.auth.auth_controller import AuthController
+from app.middlewares.session_middleware import session_middleware
 
 blueprint = Blueprint('unprotected_router', __name__)
 
@@ -10,4 +11,5 @@ def login(): return AuthController().login()
 def register(): return AuthController().register()
 
 @blueprint.route('/auth/refresh-token', methods=['POST'])
+@session_middleware
 def refresh_token(): return AuthController().refresh_token()

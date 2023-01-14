@@ -1,9 +1,10 @@
 import json
 import requests
-from flask import request
+from flask import request, session, Response
 from app.helpers.response_helper import ResponseHelper
 from app.helpers.jwt_helper import JWTHelper
 
+access_token_expires = 60 * 24 #a day
 class AuthController:
   def register(self):
     """
@@ -54,9 +55,31 @@ class AuthController:
       res = requests.post('http://127.0.0.1:5001/check-credential', data={'username': request.form['username'], 'password': request.form['password']})
       res = json.loads(res.text)
       if not res['success']: return response_helper.set_to_failed(res['message'], res['status'])
-      payload = {'user_id': res['data']['id']}
-      refresh_token = jwt_helper.sign(payload=payload, exp_mins=1, is_refresh_token=True)
-      return response_helper.set_data({'refresh_token': refresh_token})
+      user_id = res['data']['id']
+      payload = {'user_id': user_id}
+      access_token = jwt_helper.sign(payload=payload, exp_mins=access_token_expires)
+      session.permanent = True
+      session['user_id'] = user_id
+      session['is_login'] = 1
+
+      user = requests.get(f'http://127.0.0.1:5001/get-by-id/{user_id}')
+      user = json.loads(user.text)
+      return response_helper.set_data({'access_token': access_token, **user})
+    except Exception as e:
+      msg = str(e)
+      status = 400
+      response_helper.set_to_failed(msg, status)
+      return response_helper.get_response()
+    finally:
+      return response_helper.get_response()
+
+  def refresh_token(self):
+    response_helper = ResponseHelper()
+    jwt_helper = JWTHelper()
+    try:
+      payload = {'user_id': session['user_id']}
+      access_token = jwt_helper.sign(payload=payload, exp_mins=access_token_expires)
+      return response_helper.set_data({'access_token': access_token})
     except Exception as e:
       msg = str(e)
       status = 400
@@ -64,26 +87,12 @@ class AuthController:
     finally:
       return response_helper.get_response()
 
-  def refresh_token(self):
-    """
-    Request Form
-      `refresh_token`: str
-    """
+  def logout(self):
     response_helper = ResponseHelper()
-    jwt_helper = JWTHelper()
-    access_token_expires = 60 * 24 * 7 #a week
-    refresh_token_expires = 60 * 24 * 30 #a month
     try:
-      # TODO: 
-      # client need to encrypt refresh token
-      # client need to store encrypted refresh token on session storage
-      # server will receive encrypted refresh token from client
-      # need to decrypt encrypted refresh token later
-      decoded = jwt_helper.decode_token(request.form['refresh_token'])
-      payload = {'user_id': decoded['user_id']}
-      access_token = jwt_helper.sign(payload=payload, exp_mins=access_token_expires)
-      refresh_token = jwt_helper.sign(payload=payload, exp_mins=refresh_token_expires, is_refresh_token=True)
-      return response_helper.set_data({'access_token': access_token, 'refresh_token': refresh_token})
+      response_helper.message = 'logout success'
+      session.clear()
+      response_helper.remove_data()
     except Exception as e:
       msg = str(e)
       status = 400
