@@ -8,5 +8,5 @@ config = {
     'USER_SERVICE_HOST': os.getenv('USER_SERVICE_HOST'),
     'USER_SERVICE_PORT': os.getenv('USER_SERVICE_PORT'),
     'TODO_SERVICE_HOST': os.getenv('TODO_SERVICE_HOST'),
-    'TODO_SERVICE_PORT': os.getenv('TODO_SERVICE_PORT'),
+    'TODO_SERVICE_PORT': os.getenv('TODO_SERVICE_PORT')
 }
