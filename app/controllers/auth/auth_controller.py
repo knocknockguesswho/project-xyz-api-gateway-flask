@@ -32,7 +32,6 @@ class AuthController:
       msg = str(e)
       status = 400
       response_helper.set_to_failed(msg, status)
-      return response_helper.get_response()
     finally:
       return response_helper.get_response()
 
