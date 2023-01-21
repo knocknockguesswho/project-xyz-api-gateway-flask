@@ -4,7 +4,7 @@ from flask import request, session, Response
 from app.helpers.response_helper import ResponseHelper
 from app.helpers.jwt_helper import JWTHelper
 
-access_token_expires = 1 #a day
+access_token_expires = 60 * 24 #a day
 class AuthController:
   def login(self):
     """
