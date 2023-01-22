@@ -2,13 +2,14 @@ import json
 import requests
 from flask import request
 from app.helpers.response_helper import ResponseHelper
+from app.config import USER_SERVICE_URL
 
 class UserController:
   def find_user_by_username(self, **params):
     response_helper = ResponseHelper()
     username = params['username']
     try:
-      res = requests.get(f'http://127.0.0.1:5001/get-by-username/{username}')
+      res = requests.get(f'{USER_SERVICE_URL}/get-by-username/{username}')
       res = json.loads(res.text)
       if not res['success']: return response_helper.set_to_failed(res['message'], res['status'])
       return response_helper.set_data(res['data'])
@@ -36,7 +37,7 @@ class UserController:
     response_helper = ResponseHelper()
     try:
       res = requests.post(
-        'http://127.0.0.1:5001/add',
+        f'{USER_SERVICE_URL}/add',
         data={
           'first_name': request.form['first_name'],
           'last_name': request.form['last_name'],

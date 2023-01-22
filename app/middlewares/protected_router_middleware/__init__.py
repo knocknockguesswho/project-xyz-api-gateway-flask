@@ -9,7 +9,7 @@ def protected_router_middleware(func):
   def run(*args, **kwargs):
     response_helper = ResponseHelper()
     try:
-      TokenValidation().run(request, response_helper)
+      TokenValidation().run(request)
       return func(*args, **kwargs)
     except Exception as e:
       msg = str(e)

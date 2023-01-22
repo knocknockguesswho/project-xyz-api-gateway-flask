@@ -3,6 +3,7 @@ import requests
 from flask import request
 from app.helpers.response_helper import ResponseHelper
 from app.helpers.jwt_helper import JWTHelper
+from app.config import TODO_SERVICE_URL
 
 class TodoController:
   def retrieve_todo_by_session(self):
@@ -22,7 +23,7 @@ class TodoController:
       user_id = decoded_token['user_id']
       limit = request.args.get('limit') # pagination query
       last_id = request.args.get('last_id') # pagination query
-      res = requests.get(f'http://127.0.0.1:5002/get-all-by-user-id/{user_id}?limit={limit}&last_id={last_id}')
+      res = requests.get(f'{TODO_SERVICE_URL}/get-all-by-user-id/{user_id}?limit={limit}&last_id={last_id}')
       res = json.loads(res.text)
       if res['status'] == 404: return response_helper.set_data([])
       if not res['success']: return response_helper.set_to_failed(res['message'], res['status'])
