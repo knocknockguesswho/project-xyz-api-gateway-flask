@@ -1,8 +1,9 @@
 import json
 import requests
-from flask import request, session, Response
+from flask import request, session
 from app.helpers.response_helper import ResponseHelper
 from app.helpers.jwt_helper import JWTHelper
+from app.config import USER_SERVICE_URL
 
 access_token_expires = 60 * 24 #a day
 class AuthController:
@@ -15,7 +16,7 @@ class AuthController:
     response_helper = ResponseHelper()
     jwt_helper = JWTHelper()
     try:
-      res = requests.post('http://127.0.0.1:5001/check-credential', data={'username': request.form['username'], 'password': request.form['password']})
+      res = requests.post(f'{USER_SERVICE_URL}/check-credential', data={'username': request.form['username'], 'password': request.form['password']})
       res = json.loads(res.text)
       if not res['success']: return response_helper.set_to_failed(res['message'], res['status'])
       user_id = res['data']['id']
@@ -25,7 +26,7 @@ class AuthController:
       session['user_id'] = user_id
       session['is_login'] = 1
 
-      user = requests.get(f'http://127.0.0.1:5001/get-by-id/{user_id}')
+      user = requests.get(f'{USER_SERVICE_URL}/get-by-id/{user_id}')
       user = json.loads(user.text)
       return response_helper.set_data({'access_token': access_token, **user})
     except Exception as e:
