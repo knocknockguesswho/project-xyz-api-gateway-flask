@@ -20,3 +20,6 @@ def refresh_token(): return AuthController().refresh_token()
 
 @blueprint.route('/user/find-user-by-username/<string:username>')
 def find_user_by_username(username: str): return UserController().find_user_by_username(username=username)
+
+@blueprint.route('/external/country-code')
+def retrieve_all_country_codes(): return CountryCodeController().retrieve_all_country_codes()
